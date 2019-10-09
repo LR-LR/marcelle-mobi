@@ -3,7 +3,6 @@
     <div v-if="!isThinking">
       <div class="container py-5 px-2">
         <div class="row align-items-end">
-          <img :src="require('~/assets/images/supergrandfather.svg')" class="img-fluid col-4" />
           <div class="col-8">
             <div class="text-center mt-5">
               <div class="text-secondary bg-white rounded-pill p-3">d'où pars tu ?</div>
@@ -33,17 +32,18 @@
         </div>
 
         <div class="rounded mt-5" v-if="toLatLng">
-          <h4>Choisissez le Safe Mode</h4>
+          <h4>Choisissez votre moyen de transport</h4>
           <b-button-group class="d-flex justify-content-center align-content-center px-3 mt-4">
             <b-button
-              class="safemode"
-              :class="{active: safeMode == true}"
-              @click="selectSafeMode()"
+              v-for="(mode, idx) in modes"
+              :key="idx"
+              @click="setMode(mode)"
+              class="btn_mode"
+              :class="{active: selectedMode === mode}"
             >
-              <img :src="require('~/assets/images/PICTO_SAFETY/picto-blanc-contour1.svg')" />
+              <img :src="require('~/assets/images/' + mode.logo)" :alt="mode.text" />
             </b-button>
           </b-button-group>
-
           <b-button
             class="block"
             size="lg"
@@ -51,24 +51,22 @@
             style="margin-top:70px"
             variant="primary"
             id="submit"
-            :disabled="!selectSafeMode"
+            :disabled="!selectedMode"
             @click="submit"
-          >Itinéraire</b-button>
+          >Analyser mon parcours</b-button>
         </div>
       </div>
     </div>
-    <img v-else class="loading" src="../assets/images/spin.svg" style="max-height: 100vh" />
+    <!-- <div class="d-flex flex-column justify-content-around align-content-center vh-100"> -->
+    <img v-else src="../assets/images/spin.svg" style="max-height: 100vh" />
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import VueNoty from 'vuejs-noty'
-import notification from 'vue-notification'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import _ from 'underscore'
 const API_URL = 'https://api-adresse.data.gouv.fr/search/'
-
 export default {
   components: { VueBootstrapTypeahead },
   data() {
@@ -80,17 +78,26 @@ export default {
       to: '',
       fromLatLng: null,
       toLatLng: null,
-      selectedMode: 'car',
+      selectedMode: null,
       selectedAvatarIdx: null,
-      safeMode: false,
       addresses: [],
       modes: [
-        { logo: 'trot.svg', value: 'trot' },
+        { logo: 'trot.svg', value: 'bss' },
         { logo: 'walk.svg', value: 'walking' },
-        { logo: 'rtm.svg', value: 'bss' },
+        { logo: 'rtm.svg', value: 'walking' },
         { logo: 'bike.svg', value: 'bike' },
         { logo: 'car.svg', value: 'car' }
       ]
+      // avatars: [
+      //   {
+      //     icon: require('~/assets/images/loading.gif'),
+      //     name: 'MARCELLE'
+      //   },
+      //   {
+      //     icon: require('~/assets/images/loading.gif'),
+      //     name: 'MARIUS'
+      //   }
+      // ]
     }
   },
 
@@ -115,14 +122,18 @@ export default {
 
     async submit() {
       this.isThinking = true
-      await this.$store.dispatch('marius/fetchitineraries', {
-        fromLatLng: this.fromLatLng,
-        toLatLng: this.toLatLng,
-        mode: 'bss'
-      })
-      this.$router.push({
-        path: '/marius_map2'
-      })
+      try {
+        await this.$store.dispatch('marius/fetchitineraries', {
+          fromLatLng: this.fromLatLng,
+          toLatLng: this.toLatLng,
+          mode: this.selectedMode.value
+        })
+        this.$router.push({
+          path: '/marius_map'
+        })
+      } catch (error) {
+        this.isThinking = false
+      }
     },
 
     setMode(mode) {
@@ -134,10 +145,6 @@ export default {
     },
     selectAvatar(i) {
       this.selectedAvatarIdx = i
-    },
-    selectSafeMode() {
-      this.safeMode = !this.safeMode
-      //alert(this.safeMode)
     }
   },
   watch: {
@@ -229,19 +236,6 @@ export default {
       margin-top: 5px;
     }
   }
-  //--------------------------------------------------------modif css
-  .safemode {
-    max-width: 150px;
-    height: 150px;
-    border-radius: 150px;
-    padding: 0px;
-  }
-
-  .safemode img {
-    height: 120px;
-    margin-top: 10px;
-  }
-  //------------------------------------------------------------fin modif CSS
 
   .marcelle_marius_avatar {
     background-color: rgba($color: #fff, $alpha: 0.2);
@@ -260,11 +254,6 @@ export default {
       width: 80px;
       margin-top: 5px;
     }
-  }
-
-  .loading {
-    margin-top: 50vh;
-    transform: translateY(-50%);
   }
 }
 </style>
