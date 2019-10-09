@@ -14,10 +14,10 @@ export default {
     return {
       message: "LA PAGE DES BOUTONS D'ARRIVEE ET D'URGENCE"
     }
-  }
+  },
 
-  methods:{
-    sendEmergencyMsg: () => {
+  methods: {
+    sendEmergencyMsg() {
       alert('Votre contact de confiance a été prévenu !')
     }
   }
