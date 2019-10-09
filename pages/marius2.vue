@@ -2,8 +2,9 @@
   <div id="marius" class="bg-secondary">
     <div v-if="!isThinking">
       <div class="container py-5 px-2">
-        <div class="row align-items-center">
-          <div class="col-8 offset-2">
+        <div class="row align-items-end">
+          <img :src="require('~/assets/images/supergrandfather.svg')" class="img-fluid col-4" />
+          <div class="col-8">
             <div class="text-center mt-5">
               <div class="text-secondary bg-white rounded-pill p-3">d'où pars tu ?</div>
               <VueBootstrapTypeahead
@@ -58,10 +59,9 @@
             @click="submit"
           >Itinéraire</b-button>
         </div>
-        <!---------------------Fin de la Modification du code greg----------------------------->
       </div>
     </div>
-    <img v-else class="mx-0" src="../assets/images/spin.svg" style="max-height: 100vh" />
+    <img v-else class="loading" src="../assets/images/spin.svg" style="max-height: 100vh" />
   </div>
 </template>
 
@@ -264,6 +264,11 @@ export default {
       width: 80px;
       margin-top: 5px;
     }
+  }
+
+  .loading {
+    margin-top: 50vh;
+    transform: translateY(-50%);
   }
 }
 </style>
