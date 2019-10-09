@@ -44,6 +44,21 @@
             </b-button>
           </b-button-group>
 
+          <div v-if="safeMode" class="text-center mt-5 pt-5">
+            <div
+              class="text-secondary bg-white rounded-pill p-3"
+            >Rentrez le numéro de la personne de confiance</div>
+            <VueBootstrapTypeahead
+              :data="addresses"
+              v-model="to"
+              :serializer="a => a.properties.label"
+              placeholder="Exemple: 060090009"
+              @hit="setLatLng('toLatLng', $event)"
+              autofocus
+              input-class="mt-3 border-top-0 border-left-0 border-right-0 border-primary bg-secondary text-white"
+            />
+          </div>
+
           <b-button
             class="block"
             size="lg"
