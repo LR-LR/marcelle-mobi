@@ -37,16 +37,26 @@
           <!--------------------Modification du code greg----------------------------->
           <!-- -->
           <b-button-group class="d-flex justify-content-center align-content-center px-3 mt-4">
-            <b-button
-              class="safemode"
-              :class="{active: safeMode == true}"
-              @click="selectSafeMode()"
-            >
+            <b-button class="safemode" :class="{active: safeMode == true}" @click="selectSafeMode">
               <img :src="require('~/assets/images/PICTO_SAFETY/picto-blanc-contour1.svg')" />
             </b-button>
             <!---->
           </b-button-group>
           <!---->
+          <div v-if="safeMode" class="text-center mt-5 pt-5">
+            <div
+              class="text-secondary bg-white rounded-pill p-3"
+            >Rentrez le numéro de la personne de confiance</div>
+            <VueBootstrapTypeahead
+              :data="addresses"
+              v-model="to"
+              :serializer="a => a.properties.label"
+              placeholder="Exemple: 060090009"
+              @hit="setLatLng('toLatLng', $event)"
+              autofocus
+              input-class="mt-3 border-top-0 border-left-0 border-right-0 border-primary bg-secondary text-white"
+            />
+          </div>
 
           <b-button
             class="block"
@@ -75,7 +85,7 @@ const API_URL = 'https://api-adresse.data.gouv.fr/search/'
 
 export default {
   components: { VueBootstrapTypeahead },
-  data() {
+  data: function() {
     return {
       isThinking: false,
       loading: true,
@@ -108,6 +118,7 @@ export default {
       this[key] = [event.geometry.coordinates[1], event.geometry.coordinates[0]]
       this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight))
     },
+
     async getAddresses(query) {
       let results = await this.$axios.$get(API_URL, {
         params: { q: query, autocomplete: 1, limit: 10 }
