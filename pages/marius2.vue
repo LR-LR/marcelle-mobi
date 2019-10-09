@@ -34,15 +34,11 @@
 
         <div class="rounded mt-5" v-if="toLatLng">
           <h4>Choisissez le Safe Mode</h4>
-          <!--------------------Modification du code greg----------------------------->
-          <!-- -->
           <b-button-group class="d-flex justify-content-center align-content-center px-3 mt-4">
             <b-button class="safemode" :class="{active: safeMode == true}" @click="selectSafeMode">
               <img :src="require('~/assets/images/PICTO_SAFETY/picto-blanc-contour1.svg')" />
             </b-button>
-            <!---->
           </b-button-group>
-          <!---->
           <div v-if="safeMode" class="text-center mt-5 pt-5">
             <div
               class="text-secondary bg-white rounded-pill p-3"
@@ -99,9 +95,9 @@ export default {
       safeMode: false,
       addresses: [],
       modes: [
-        { logo: 'trot.svg', value: 'bss' },
+        { logo: 'trot.svg', value: 'trot' },
         { logo: 'walk.svg', value: 'walking' },
-        { logo: 'rtm.svg', value: 'walking' },
+        { logo: 'rtm.svg', value: 'bss' },
         { logo: 'bike.svg', value: 'bike' },
         { logo: 'car.svg', value: 'car' }
       ]
@@ -133,7 +129,7 @@ export default {
       await this.$store.dispatch('marius/fetchitineraries', {
         fromLatLng: this.fromLatLng,
         toLatLng: this.toLatLng,
-        mode: 'car'
+        mode: 'bss'
       })
       this.$router.push({
         path: '/marius_map2'
